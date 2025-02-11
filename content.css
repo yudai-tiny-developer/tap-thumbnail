@@ -1,3 +1,8 @@
 button._tap_thumbnail_button {
     fill: #eee !important;
 }
+
+div._tap_thumbnail_button {
+    display: flex;
+    align-items: center;
+}
