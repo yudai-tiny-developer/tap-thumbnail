@@ -33,11 +33,9 @@ function main(app) {
 
             thumbnail.addEventListener('load', () => {
                 const button_rect = thumbnail_button.getBoundingClientRect();
-
                 thumbnail_container.style.left = Math.max(button_rect.right - 640, 0) + 'px';
                 thumbnail_container.style.top = Math.max(button_rect.bottom - 360, 0) + 'px';
-                thumbnail_container.style.visibility = 'visible';
-
+                thumbnail.style.filter = 'contrast(1)';
                 thumbnail.focus();
             });
 
@@ -56,6 +54,8 @@ function main(app) {
     let thumbnail;
 
     const shortcut_command_show = () => {
+        thumbnail.style.filter = 'contrast(0)';
+        thumbnail_container.style.visibility = 'visible';
         document.dispatchEvent(new CustomEvent('_tap_thumbnail_show'));
     };
 

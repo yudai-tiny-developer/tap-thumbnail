@@ -5,7 +5,10 @@ document.addEventListener('_tap_thumbnail_show', e => {
     if (player) {
         const video_id = player.getVideoData()?.video_id;
         if (video_id) {
-            _tap_thumbnail_app.querySelector('input._tap_thumbnail_button').src = `https://i.ytimg.com/vi/${video_id}/maxresdefault.jpg`;
+            const thumbnail = _tap_thumbnail_app.querySelector('input._tap_thumbnail_button');
+            if (thumbnail) {
+                thumbnail.src = `https://i.ytimg.com/vi/${video_id}/maxresdefault.jpg`;
+            }
         }
     }
 });
