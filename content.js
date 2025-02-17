@@ -54,13 +54,17 @@ function main(app) {
     let thumbnail;
 
     const shortcut_command_show = () => {
-        thumbnail.style.filter = 'contrast(0)';
-        thumbnail_container.style.visibility = 'visible';
-        document.dispatchEvent(new CustomEvent('_tap_thumbnail_show'));
+        if (thumbnail && thumbnail_container) {
+            thumbnail.style.filter = 'contrast(0)';
+            thumbnail_container.style.visibility = 'visible';
+            document.dispatchEvent(new CustomEvent('_tap_thumbnail_show'));
+        }
     };
 
     const shortcut_command_hide = e => {
-        thumbnail_container.style.visibility = 'hidden';
+        if (thumbnail_container) {
+            thumbnail_container.style.visibility = 'hidden';
+        }
     };
 
     document.body.addEventListener('mouseleave', shortcut_command_hide);
