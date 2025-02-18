@@ -50,13 +50,24 @@ function main(app) {
     let thumbnail_container;
     let thumbnail;
 
+    function get_viewport_rect() {
+        const body_rect = document.body.getBoundingClientRect();
+        const full_player_rect = app.querySelector('div#full-bleed-container ytd-player')?.getBoundingClientRect();
+
+        if (body_rect.top <= (full_player_rect?.top ?? 0)) {
+            return body_rect;
+        } else {
+            return full_player_rect;
+        }
+    }
+
     const shortcut_command_show = () => {
         thumbnail.style.filter = 'contrast(0)';
 
-        const body_rect = (app.querySelector('div#full-bleed-container ytd-player') ?? document.body).getBoundingClientRect();
+        const viewport_rect = get_viewport_rect();
         const button_rect = thumbnail_button.getBoundingClientRect();
-        thumbnail_container.style.left = Math.max(Math.min(button_rect.left + button_rect.width / 2 - 320 - body_rect.left, body_rect.right - 640), 0) + 'px';
-        thumbnail_container.style.top = Math.max(button_rect.top + button_rect.height - 360 - body_rect.top, 0) + 'px';
+        thumbnail_container.style.left = Math.max(Math.min(button_rect.left + button_rect.width / 2 - 320 - viewport_rect.left, viewport_rect.right - 640), 0) + 'px';
+        thumbnail_container.style.top = Math.max(button_rect.top + button_rect.height - 360 - viewport_rect.top, 0) + 'px';
         thumbnail_container.style.visibility = 'visible';
         thumbnail_container.style.opacity = 1;
 
