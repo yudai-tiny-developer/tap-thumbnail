@@ -32,15 +32,17 @@ function main(app) {
             thumbnail.classList.add('_tap_thumbnail_button');
 
             thumbnail.addEventListener('load', () => {
+                const body_rect = document.body.getBoundingClientRect();
                 const button_rect = thumbnail_button.getBoundingClientRect();
-                thumbnail_container.style.left = Math.max(button_rect.right - 640, 0) + 'px';
-                thumbnail_container.style.top = Math.max(button_rect.bottom - 360, 0) + 'px';
+                thumbnail_container.style.left = Math.max(button_rect.x + button_rect.width / 2 - 320 - body_rect.x, 0) + 'px';
+                thumbnail_container.style.top = Math.max(button_rect.y + button_rect.height - 360 - body_rect.y, 0) + 'px';
                 thumbnail.style.filter = 'contrast(1)';
-                thumbnail.focus();
+                thumbnail.focus({ preventScroll: true, focusVisible: false });
             });
 
             thumbnail.addEventListener('click', shortcut_command_hide);
             thumbnail.addEventListener('blur', shortcut_command_hide);
+            thumbnail.addEventListener('mouseout', shortcut_command_hide);
 
             thumbnail_container.appendChild(thumbnail);
         }
@@ -57,6 +59,7 @@ function main(app) {
         if (thumbnail && thumbnail_container) {
             thumbnail.style.filter = 'contrast(0)';
             thumbnail_container.style.visibility = 'visible';
+            thumbnail_container.style.opacity = 1;
             document.dispatchEvent(new CustomEvent('_tap_thumbnail_show'));
         }
     };
@@ -64,6 +67,7 @@ function main(app) {
     const shortcut_command_hide = e => {
         if (thumbnail_container) {
             thumbnail_container.style.visibility = 'hidden';
+            thumbnail_container.style.opacity = 0;
         }
     };
 
