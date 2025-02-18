@@ -55,8 +55,8 @@ function main(app) {
 
         const body_rect = document.body.getBoundingClientRect();
         const button_rect = thumbnail_button.getBoundingClientRect();
-        thumbnail_container.style.left = Math.max(button_rect.x + button_rect.width / 2 - 320 - body_rect.x, 0) + 'px';
-        thumbnail_container.style.top = Math.max(button_rect.y + button_rect.height - 360 - body_rect.y, 0) + 'px';
+        thumbnail_container.style.left = Math.max(Math.min(button_rect.left + button_rect.width / 2 - 320 - body_rect.left, body_rect.right - 640), 0) + 'px';
+        thumbnail_container.style.top = Math.max(button_rect.top + button_rect.height - 360 - body_rect.top, 0) + 'px';
         thumbnail_container.style.visibility = 'visible';
         thumbnail_container.style.opacity = 1;
 
