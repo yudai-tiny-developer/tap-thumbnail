@@ -54,10 +54,12 @@ function main(app) {
         const body_rect = document.body.getBoundingClientRect();
         const full_player_rect = app.querySelector('div#full-bleed-container ytd-player')?.getBoundingClientRect();
 
-        if (body_rect.top <= (full_player_rect?.top ?? 0)) {
+        if ((full_player_rect?.top ?? Infinity) < body_rect.top) {
+            return full_player_rect;
+        } else if (body_rect.width > 0) {
             return body_rect;
         } else {
-            return full_player_rect;
+            return DOMRect.fromRect({ x: 0, y: 0, width: window.innerWidth, height: window.innerHeight });
         }
     }
 
