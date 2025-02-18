@@ -70,7 +70,7 @@ function main(app) {
         const button_rect = thumbnail_button.getBoundingClientRect();
         thumbnail_container.style.left = Math.max(Math.min(button_rect.left + button_rect.width / 2 - 320 - viewport_rect.left, viewport_rect.right - 640), 0) + 'px';
         thumbnail_container.style.top = Math.max(button_rect.top + button_rect.height - 360 - viewport_rect.top, 0) + 'px';
-        thumbnail_container.style.visibility = 'visible';
+        thumbnail_container.style.display = 'block';
         thumbnail_container.style.opacity = 1;
 
         document.dispatchEvent(new CustomEvent('_tap_thumbnail_show'));
@@ -79,7 +79,7 @@ function main(app) {
 
     const shortcut_command_hide = e => {
         if (thumbnail_container) {
-            thumbnail_container.style.visibility = 'hidden';
+            thumbnail_container.style.display = '';
             thumbnail_container.style.opacity = 0;
         }
     };
@@ -89,7 +89,7 @@ function main(app) {
     new MutationObserver(update).observe(app, { childList: true, subtree: true });
 
     chrome.runtime.onMessage.addListener(command => {
-        if (thumbnail_container.style.visibility === 'hidden') {
+        if (thumbnail_container.style.display === '') {
             shortcut_command_show();
         } else {
             shortcut_command_hide();

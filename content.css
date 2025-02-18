@@ -8,7 +8,7 @@ div._tap_thumbnail_button {
     height: 360px;
     z-index: 3000;
 
-    visibility: hidden;
+    display: none;
     opacity: 0;
     transition: opacity 0.35s;
 }
