@@ -8,9 +8,6 @@ div._tap_thumbnail_button {
     height: 360px;
     z-index: 2000;
 
-    border: 2px solid black;
-    border-radius: 8px;
-
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.35s;
@@ -19,4 +16,9 @@ div._tap_thumbnail_button {
 input._tap_thumbnail_button {
     width: 640px;
     height: 360px;
+
+    border: 2px solid black;
+    border-radius: 8px;
+
+    background-color: gray;
 }
