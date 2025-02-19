@@ -1,12 +1,13 @@
 main(document.querySelector('ytd-app') ?? document.body);
 
 function main(app) {
+    let player;
     let thumbnail_button;
     let thumbnail_container;
     let thumbnail;
 
     function loadSettings() {
-        const player = app.querySelector('div#movie_player');
+        player = player ?? app.querySelector('div#movie_player');
         if (!player) {
             return false;
         }
@@ -21,12 +22,12 @@ function main(app) {
             return false;
         }
 
-        update_buttons(player, area, panel);
+        update_buttons(area, panel);
 
         return true;
     }
 
-    function update_buttons(player, area, panel) {
+    function update_buttons(area, panel) {
         if (!thumbnail_button) {
             thumbnail_button = document.createElement('button');
             thumbnail_button.classList.add('_tap_thumbnail_button', 'ytp-button');
@@ -71,33 +72,37 @@ function main(app) {
     }
 
     const shortcut_command_show = () => {
-        if (thumbnail_button && thumbnail_container && thumbnail) {
-            const player = app.querySelector('div#movie_player');
-            if (player) {
-                thumbnail.style.filter = 'contrast(0)';
+        if (player && thumbnail_button && thumbnail_container && thumbnail) {
+            thumbnail.style.filter = 'contrast(0)';
+            document.dispatchEvent(new CustomEvent('_tap_thumbnail_show'));
 
-                thumbnail_container.style.left = 0;
-                thumbnail_container.style.top = 0;
-                thumbnail_container.style.visibility = 'hidden';
-                thumbnail_container.style.display = 'block';
-                const player_rect = player.getBoundingClientRect();
-                const thumbnail_rect = thumbnail_container.getBoundingClientRect();
-                const button_rect = getRelativeRect(thumbnail_button, player);
-                thumbnail_container.style.left = Math.max(Math.min(button_rect.left + button_rect.width / 2 - thumbnail_rect.width / 2, player_rect.width - thumbnail_rect.width), 0) + 'px';
-                thumbnail_container.style.top = Math.max(Math.min(button_rect.bottom - thumbnail_rect.height, player_rect.height - thumbnail_rect.height), 0) + 'px';
-                thumbnail_container.style.visibility = '';
-                thumbnail_container.style.opacity = 1;
+            Object.assign(thumbnail_container.style, {
+                left: '0px',
+                top: '0px',
+                visibility: 'hidden',
+                display: 'block',
+            });
 
-                document.dispatchEvent(new CustomEvent('_tap_thumbnail_show'));
-                thumbnail.focus({ preventScroll: true, focusVisible: false });
-            }
+            const player_rect = player.getBoundingClientRect();
+            const button_rect = getRelativeRect(thumbnail_button, player);
+
+            Object.assign(thumbnail_container.style, {
+                left: `${Math.max(Math.min(button_rect.left + button_rect.width / 2 - 320, player_rect.width - 640), 0)}px`,
+                top: `${Math.max(Math.min(button_rect.bottom - 360, player_rect.height - 360), 0)}px`,
+                visibility: '',
+                opacity: 1,
+            });
+
+            thumbnail.focus({ preventScroll: true, focusVisible: false });
         }
     };
 
     const shortcut_command_hide = () => {
         if (thumbnail_container) {
-            thumbnail_container.style.display = '';
-            thumbnail_container.style.opacity = 0;
+            Object.assign(thumbnail_container.style, {
+                display: '',
+                opacity: 0,
+            });
         }
     };
 

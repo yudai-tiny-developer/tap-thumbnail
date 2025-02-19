@@ -4,8 +4,6 @@ button._tap_thumbnail_button {
 
 div._tap_thumbnail_button {
     position: absolute;
-    width: 640px;
-    height: 360px;
     z-index: 3000;
 
     display: none;
@@ -16,9 +14,7 @@ div._tap_thumbnail_button {
 input._tap_thumbnail_button {
     width: 640px;
     height: 360px;
-
     border: 2px solid black;
     border-radius: 8px;
-
     background-color: gray;
 }
