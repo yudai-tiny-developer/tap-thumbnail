@@ -5,21 +5,28 @@ function main(app) {
     let thumbnail_container;
     let thumbnail;
 
-    const interval = setInterval(() => {
+    function loadSettings() {
         const player = app.querySelector('div#movie_player');
-        if (player) {
-            const area = player.querySelector('div.ytp-right-controls');
-            if (area) {
-                const panel = area.querySelector('button.ytp-settings-button');
-                if (panel) {
-                    clearInterval(interval);
-                    create_thumbnail_button(player, area, panel);
-                }
-            }
+        if (!player) {
+            return false;
         }
-    }, 500);
 
-    function create_thumbnail_button(player, area, panel) {
+        const area = player.querySelector('div.ytp-right-controls');
+        if (!area) {
+            return false;
+        }
+
+        const panel = area.querySelector('button.ytp-settings-button');
+        if (!panel) {
+            return false;
+        }
+
+        update_buttons(player, area, panel);
+
+        return true;
+    }
+
+    function update_buttons(player, area, panel) {
         if (!thumbnail_button) {
             thumbnail_button = document.createElement('button');
             thumbnail_button.classList.add('_tap_thumbnail_button', 'ytp-button');
@@ -104,6 +111,14 @@ function main(app) {
                 shortcut_command_hide();
             }
         }
+    });
+
+    document.addEventListener('_tap_thumbnail_init', e => {
+        const interval = setInterval(() => {
+            if (loadSettings()) {
+                clearInterval(interval);
+            }
+        }, 200);
     });
 
     const s = document.createElement('script');
