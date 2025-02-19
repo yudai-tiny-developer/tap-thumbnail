@@ -1,19 +1,25 @@
 main(document.querySelector('ytd-app') ?? document.body);
 
 function main(app) {
-    function update() {
-        if (!thumbnail_container) {
-            const area = app.querySelector('div.ytp-right-controls');
+    let thumbnail_button;
+    let thumbnail_container;
+    let thumbnail;
+
+    const interval = setInterval(() => {
+        const player = app.querySelector('div#movie_player');
+        if (player) {
+            const area = player.querySelector('div.ytp-right-controls');
             if (area) {
                 const panel = area.querySelector('button.ytp-settings-button');
                 if (panel) {
-                    create_thumbnail_button(area, panel);
+                    clearInterval(interval);
+                    create_thumbnail_button(player, area, panel);
                 }
             }
         }
-    }
+    }, 500);
 
-    function create_thumbnail_button(area, panel) {
+    function create_thumbnail_button(player, area, panel) {
         if (!thumbnail_button) {
             thumbnail_button = document.createElement('button');
             thumbnail_button.classList.add('_tap_thumbnail_button', 'ytp-button');
@@ -38,46 +44,50 @@ function main(app) {
             thumbnail.addEventListener('click', shortcut_command_hide);
             thumbnail.addEventListener('blur', shortcut_command_hide);
             thumbnail.addEventListener('mouseout', shortcut_command_hide);
-
-            thumbnail_container.appendChild(thumbnail);
+            thumbnail.addEventListener('contextmenu', e => { e.stopPropagation(); });
         }
 
+        thumbnail_container.appendChild(thumbnail);
         area.insertBefore(thumbnail_button, panel);
-        app.appendChild(thumbnail_container);
+        player.appendChild(thumbnail_container);
     }
 
-    let thumbnail_button;
-    let thumbnail_container;
-    let thumbnail;
-
-    function get_viewport_rect() {
-        const body_rect = document.body.getBoundingClientRect();
-        const full_player_rect = app.querySelector('div#full-bleed-container ytd-player')?.getBoundingClientRect();
-
-        if ((full_player_rect?.top ?? Infinity) < body_rect.top) {
-            return full_player_rect;
-        } else if (body_rect.width > 0) {
-            return body_rect;
-        } else {
-            return DOMRect.fromRect({ x: 0, y: 0, width: window.innerWidth, height: window.innerHeight });
-        }
+    function getRelativeRect(node, parent) {
+        const n = node.getBoundingClientRect();
+        const p = parent.getBoundingClientRect();
+        return DOMRect.fromRect({
+            x: n.x - p.x,
+            y: n.y - p.y,
+            width: n.width,
+            height: n.height,
+        });
     }
 
     const shortcut_command_show = () => {
-        thumbnail.style.filter = 'contrast(0)';
+        if (thumbnail_button && thumbnail_container && thumbnail) {
+            const player = app.querySelector('div#movie_player');
+            if (player) {
+                thumbnail.style.filter = 'contrast(0)';
 
-        const viewport_rect = get_viewport_rect();
-        const button_rect = thumbnail_button.getBoundingClientRect();
-        thumbnail_container.style.left = Math.max(Math.min(button_rect.left + button_rect.width / 2 - 320 - viewport_rect.left, viewport_rect.right - 640), 0) + 'px';
-        thumbnail_container.style.top = Math.max(button_rect.top + button_rect.height - 360 - viewport_rect.top, 0) + 'px';
-        thumbnail_container.style.display = 'block';
-        thumbnail_container.style.opacity = 1;
+                thumbnail_container.style.left = 0;
+                thumbnail_container.style.top = 0;
+                thumbnail_container.style.visibility = 'hidden';
+                thumbnail_container.style.display = 'block';
+                const player_rect = player.getBoundingClientRect();
+                const thumbnail_rect = thumbnail_container.getBoundingClientRect();
+                const button_rect = getRelativeRect(thumbnail_button, player);
+                thumbnail_container.style.left = Math.max(Math.min(button_rect.left + button_rect.width / 2 - thumbnail_rect.width / 2, player_rect.width - thumbnail_rect.width), 0) + 'px';
+                thumbnail_container.style.top = Math.max(Math.min(button_rect.bottom - thumbnail_rect.height, player_rect.height - thumbnail_rect.height), 0) + 'px';
+                thumbnail_container.style.visibility = '';
+                thumbnail_container.style.opacity = 1;
 
-        document.dispatchEvent(new CustomEvent('_tap_thumbnail_show'));
-        thumbnail.focus({ preventScroll: true, focusVisible: false });
+                document.dispatchEvent(new CustomEvent('_tap_thumbnail_show'));
+                thumbnail.focus({ preventScroll: true, focusVisible: false });
+            }
+        }
     };
 
-    const shortcut_command_hide = e => {
+    const shortcut_command_hide = () => {
         if (thumbnail_container) {
             thumbnail_container.style.display = '';
             thumbnail_container.style.opacity = 0;
@@ -86,13 +96,13 @@ function main(app) {
 
     document.body.addEventListener('mouseleave', shortcut_command_hide);
 
-    new MutationObserver(update).observe(app, { childList: true, subtree: true });
-
-    chrome.runtime.onMessage.addListener(command => {
-        if (thumbnail_container.style.display === '') {
-            shortcut_command_show();
-        } else {
-            shortcut_command_hide();
+    chrome.runtime.onMessage.addListener(() => {
+        if (thumbnail_container) {
+            if (thumbnail_container.style.display === '') {
+                shortcut_command_show();
+            } else {
+                shortcut_command_hide();
+            }
         }
     });
 
