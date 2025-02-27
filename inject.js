@@ -34,9 +34,12 @@
 
     const detect_interval = setInterval(() => {
         player = app.querySelector('div#movie_player');
-        if (player) {
-            clearInterval(detect_interval);
-            document.dispatchEvent(new CustomEvent('_tap_thumbnail_init'));
+        if (!player) {
+            return;
         }
-    }, 200);
+
+        clearInterval(detect_interval);
+
+        document.dispatchEvent(new CustomEvent('_tap_thumbnail_init'));
+    }, 1000);
 })();
