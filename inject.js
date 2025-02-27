@@ -1,8 +1,4 @@
 (() => {
-    const http = new XMLHttpRequest();
-    let player;
-    let thumbnail;
-
     function set_src(thumbnail, url) {
         http.open('HEAD', url, false);
         http.send();
@@ -14,12 +10,16 @@
         }
     }
 
-    document.addEventListener('_tap_thumbnail_show', e => {
-        player = player ?? document.querySelector('div#movie_player');
+    const http = new XMLHttpRequest();
+    const app = document.querySelector('ytd-app') ?? document.body; // YouTube.com or Embedded Player
+
+    let player;
+
+    document.addEventListener('_tap_thumbnail_show', () => {
         if (player) {
             const video_id = player.getVideoData()?.video_id;
             if (video_id) {
-                thumbnail = thumbnail ?? player.querySelector('input._tap_thumbnail_button');
+                const thumbnail = player.querySelector('input._tap_thumbnail_button');
                 thumbnail && (
                     set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/maxresdefault.jpg`) ||
                     set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/sddefault.jpg`) ||
@@ -32,5 +32,14 @@
         }
     });
 
-    document.dispatchEvent(new CustomEvent('_tap_thumbnail_init'));
+    const detect_interval = setInterval(() => {
+        player = app.querySelector('div#movie_player');
+        if (!player) {
+            return;
+        }
+
+        clearInterval(detect_interval);
+
+        document.dispatchEvent(new CustomEvent('_tap_thumbnail_init'));
+    }, 500);
 })();
