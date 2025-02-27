@@ -111,7 +111,7 @@ function main(app) {
 
             area.insertBefore(thumbnail_button, panel);
             player.appendChild(thumbnail_container);
-        }, 1000);
+        }, 500);
     });
 
     const s = document.createElement('script');

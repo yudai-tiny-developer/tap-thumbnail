@@ -41,5 +41,5 @@
         clearInterval(detect_interval);
 
         document.dispatchEvent(new CustomEvent('_tap_thumbnail_init'));
-    }, 1000);
+    }, 500);
 })();
