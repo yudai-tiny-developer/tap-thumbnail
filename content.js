@@ -94,17 +94,17 @@ function main(app) {
         const detect_interval = setInterval(() => {
             player = app.querySelector('div#movie_player');
             if (!player) {
-                return false;
+                return;
             }
 
             const area = player.querySelector('div.ytp-right-controls');
             if (!area) {
-                return false;
+                return;
             }
 
             const panel = area.querySelector('button.ytp-settings-button');
             if (!panel) {
-                return false;
+                return;
             }
 
             clearInterval(detect_interval);
