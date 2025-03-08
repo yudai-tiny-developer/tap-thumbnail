@@ -102,14 +102,9 @@ function main(app) {
                 return;
             }
 
-            const panel = area.querySelector('button.ytp-settings-button');
-            if (!panel) {
-                return;
-            }
-
             clearInterval(detect_interval);
 
-            area.insertBefore(thumbnail_button, panel);
+            area.insertBefore(thumbnail_button, area.firstChild);
             player.appendChild(thumbnail_container);
         }, 500);
     });
