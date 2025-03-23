@@ -32,14 +32,13 @@
         }
     });
 
-    const detect_interval = setInterval(() => {
-        player = app.querySelector('div#movie_player');
-        if (!player) {
+    setInterval(() => {
+        const player_c = app.querySelector('div#movie_player');
+        if (!player_c || player_c === player) {
             return;
         }
-
-        clearInterval(detect_interval);
+        player = player_c;
 
         document.dispatchEvent(new CustomEvent('_tap_thumbnail_init'));
-    }, 500);
+    }, 1000);
 })();

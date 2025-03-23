@@ -79,6 +79,7 @@ function main(app) {
     const thumbnail = create_thumbnail();
 
     let player;
+    let detect_interval;
 
     document.body.addEventListener('mouseleave', shortcut_command_hide);
 
@@ -90,23 +91,23 @@ function main(app) {
         }
     });
 
-    document.addEventListener('_tap_thumbnail_init', e => {
-        const detect_interval = setInterval(() => {
-            player = app.querySelector('div#movie_player');
-            if (!player) {
+    document.addEventListener('_tap_thumbnail_init', () => {
+        clearInterval(detect_interval);
+        detect_interval = setInterval(() => {
+            const player_c = app.querySelector('div#movie_player');
+            if (!player_c || player_c === player) {
                 return;
             }
+            player = player_c;
 
             const area = player.querySelector('div.ytp-right-controls');
             if (!area) {
                 return;
             }
 
-            clearInterval(detect_interval);
-
             area.insertBefore(thumbnail_button, area.firstChild);
             player.appendChild(thumbnail_container);
-        }, 500);
+        }, 1000);
     });
 
     const s = document.createElement('script');
