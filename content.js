@@ -79,7 +79,6 @@ function main(app) {
     const thumbnail = create_thumbnail();
 
     let player;
-    let detect_interval;
 
     document.body.addEventListener('mouseleave', shortcut_command_hide);
 
@@ -92,22 +91,22 @@ function main(app) {
     });
 
     document.addEventListener('_tap_thumbnail_init', () => {
-        clearInterval(detect_interval);
-        detect_interval = setInterval(() => {
-            const player_c = app.querySelector('div#movie_player');
-            if (!player_c || player_c === player) {
+        const detect_interval = setInterval(() => {
+            player = app.querySelector('div#movie_player');
+            if (!player) {
                 return;
             }
-            player = player_c;
 
             const area = player.querySelector('div.ytp-right-controls');
             if (!area) {
                 return;
             }
 
+            clearInterval(detect_interval);
+
             area.insertBefore(thumbnail_button, area.firstChild);
             player.appendChild(thumbnail_container);
-        }, 1000);
+        }, 500);
     });
 
     const s = document.createElement('script');
