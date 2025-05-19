@@ -23,7 +23,7 @@
                 thumbnail && (
                     set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/maxresdefault.jpg`) ||
                     set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/sddefault.jpg`) ||
-                    set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/hqdefault`) ||
+                    set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/hqdefault.jpg`) ||
                     set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/mqdefault.jpg`) ||
                     set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/default.jpg`) ||
                     set_src(thumbnail, '')
