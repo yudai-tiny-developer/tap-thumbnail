@@ -46,6 +46,22 @@ function main(app) {
         });
     }
 
+    function append_thumbnail_button() {
+        if (thumbnail_button) {
+            const slate = player?.querySelector('div.ytp-offline-slate');
+            if (slate && getComputedStyle(slate).display !== 'none') {
+                const area_offline = slate.querySelector('div.ytp-offline-slate-bar');
+                thumbnail_button.style.width = '48px';
+                thumbnail_button.style.height = '48px';
+                area_offline.appendChild(thumbnail_button);
+            } else if (area && getComputedStyle(area).display !== 'none') {
+                thumbnail_button.style.width = undefined;
+                thumbnail_button.style.height = undefined;
+                area.insertBefore(thumbnail_button, area.firstChild);
+            }
+        }
+    }
+
     const shortcut_command_show = () => {
         if (player) {
             thumbnail.style.filter = 'contrast(0)';
@@ -59,7 +75,7 @@ function main(app) {
             });
 
             const player_rect = player.getBoundingClientRect();
-            const button_rect = getRelativeRect(thumbnail_button, player);
+            let button_rect = getRelativeRect(thumbnail_button, player);
 
             Object.assign(thumbnail_container.style, {
                 left: `${Math.max(Math.min(button_rect.left + button_rect.width / 2 - 320, player_rect.width - 640), 0)}px`,
@@ -83,7 +99,9 @@ function main(app) {
     const thumbnail = create_thumbnail();
 
     let player;
+    let area;
     let thumbnail_button;
+    let detect_interval;
 
     document.body.addEventListener('mouseleave', shortcut_command_hide);
 
@@ -96,13 +114,14 @@ function main(app) {
     });
 
     document.addEventListener('_tap_thumbnail_init', () => {
-        const detect_interval = setInterval(() => {
+        clearInterval(detect_interval);
+        detect_interval = setInterval(() => {
             player = app.querySelector('div#movie_player');
             if (!player) {
                 return;
             }
 
-            const area = player.querySelector('div.ytp-right-controls');
+            area = player.querySelector('div.ytp-right-controls');
             if (!area) {
                 return;
             }
@@ -110,10 +129,14 @@ function main(app) {
             clearInterval(detect_interval);
 
             thumbnail_button = create_thumbnail_button(getComputedStyle(area).display === 'flex');
+            append_thumbnail_button();
 
-            area.insertBefore(thumbnail_button, area.firstChild);
             player.appendChild(thumbnail_container);
         }, 500);
+    });
+
+    document.addEventListener('yt-navigate-finish', async () => {
+        append_thumbnail_button();
     });
 
     const s = document.createElement('script');
