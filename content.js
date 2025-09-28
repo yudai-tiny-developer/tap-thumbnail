@@ -126,10 +126,19 @@ function main(app) {
                 return;
             }
 
+            const video = player.querySelector('video.html5-main-video');
+            if (!video) {
+                return;
+            }
+
             clearInterval(detect_interval);
 
             thumbnail_button = create_thumbnail_button(getComputedStyle(area).display === 'flex');
             append_thumbnail_button();
+
+            video.addEventListener('canplay', async () => {
+                append_thumbnail_button();
+            });
 
             player.appendChild(thumbnail_container);
         }, 500);
