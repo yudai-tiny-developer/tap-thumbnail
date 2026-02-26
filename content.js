@@ -1,6 +1,6 @@
-main(document.querySelector('ytd-app') ?? document.body);
+main();
 
-function main(app) {
+function main() {
     function create_thumbnail_button(delhi) {
         const button = document.createElement('button');
         button.classList.add('_tap_thumbnail_button', 'ytp-button');
@@ -103,8 +103,6 @@ function main(app) {
     let thumbnail_button;
     let detect_interval;
 
-    document.body.addEventListener('mouseleave', shortcut_command_hide);
-
     chrome.runtime.onMessage.addListener(() => {
         if (thumbnail_container.style.display === '') {
             shortcut_command_show();
@@ -116,7 +114,7 @@ function main(app) {
     document.addEventListener('_tap_thumbnail_init', () => {
         clearInterval(detect_interval);
         detect_interval = setInterval(() => {
-            player = app.querySelector('div#movie_player');
+            player = document.getElementById("movie_player");
             if (!player) {
                 return;
             }
@@ -143,6 +141,8 @@ function main(app) {
             });
 
             player.appendChild(thumbnail_container);
+
+            document.body.addEventListener('mouseleave', shortcut_command_hide);
         }, 500);
     });
 
