@@ -1,4 +1,4 @@
-# Tap Thumbnail
+# YouTube Thumbnail Button
 
 A Chrome extension that adds a button to the YouTube player so you can quickly preview the current video's thumbnail.
 
