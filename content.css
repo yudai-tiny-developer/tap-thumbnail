@@ -11,7 +11,7 @@ div._tap_thumbnail_button {
     transition: opacity 0.35s;
 }
 
-input._tap_thumbnail_button {
+input#_tap_thumbnail_button {
     width: 640px;
     height: 360px;
     border: 2px solid black;

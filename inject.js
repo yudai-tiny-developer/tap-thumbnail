@@ -18,7 +18,7 @@
         if (player) {
             const video_id = player.getVideoData()?.video_id;
             if (video_id) {
-                const thumbnail = player.querySelector('input._tap_thumbnail_button');
+                const thumbnail = document.getElementById('_tap_thumbnail_button');
                 thumbnail && (
                     set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/maxresdefault.jpg`) ||
                     set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/sddefault.jpg`) ||
@@ -33,9 +33,7 @@
 
     const detect_interval = setInterval(() => {
         player = document.getElementById("movie_player");
-        if (!player) {
-            return;
-        }
+        if (!player) return;
 
         clearInterval(detect_interval);
 
