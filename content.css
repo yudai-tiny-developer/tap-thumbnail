@@ -2,6 +2,13 @@ button._tap_thumbnail_button {
     fill: #eee;
 }
 
+div#player-controls button._tap_thumbnail_button {
+    text-align: center;
+    border-radius: 24px;
+    background: rgba(0, 0, 0, 0.3);
+    text-shadow: 0 0 2px #000;
+}
+
 div._tap_thumbnail_button {
     position: absolute;
     z-index: 3000;
