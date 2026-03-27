@@ -1,5 +1,6 @@
 button._tap_thumbnail_button {
     fill: #eee;
+    text-align: center;
 }
 
 div#player-controls button._tap_thumbnail_button {
