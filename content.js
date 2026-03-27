@@ -1,15 +1,21 @@
 main();
 
 function main() {
-    function create_thumbnail_button() {
+    function isEmbed(url) {
+        return url.startsWith('https://www.youtube.com/embed/')
+            || url.startsWith('https://www.youtube-nocookie.com/embed/')
+            ;
+    }
+
+    function create_button() {
         const button = document.createElement('button');
         button.classList.add('_tap_thumbnail_button', 'ytp-button');
-        button.innerHTML = '<svg viewBox="0 0 512 512" style="width: 50%; height: 50%;"><g><path d="M0,0v512h512V0H0z M163.15,120.064c28.778,0,52.101,23.331,52.101,52.11s-23.323,52.11-52.101,52.11 c-28.777,0-52.109-23.331-52.109-52.11S134.372,120.064,163.15,120.064z M454.417,386.525c-1.789,3.325-5.267,5.411-9.05,5.411 H66.633c-3.774,0-7.244-2.067-9.041-5.392c-1.798-3.326-1.627-7.37,0.449-10.525l66.248-100.939 c4.394-6.695,11.657-10.965,19.646-11.531c8-0.566,15.792,2.625,21.094,8.637l45.693,51.786l82.793-125.996 c4.745-7.217,12.807-11.576,21.444-11.585c8.637-0.009,16.708,4.332,21.463,11.54L453.95,375.992 C456.034,379.156,456.215,383.2,454.417,386.525z"></path></g></svg>';
+        button.innerHTML = '<svg viewBox="0 0 512 512" style="width: 100%; height: 100%; padding: 0; transform: scale(0.5);"><g><path d="M0,0v512h512V0H0z M163.15,120.064c28.778,0,52.101,23.331,52.101,52.11s-23.323,52.11-52.101,52.11 c-28.777,0-52.109-23.331-52.109-52.11S134.372,120.064,163.15,120.064z M454.417,386.525c-1.789,3.325-5.267,5.411-9.05,5.411 H66.633c-3.774,0-7.244-2.067-9.041-5.392c-1.798-3.326-1.627-7.37,0.449-10.525l66.248-100.939 c4.394-6.695,11.657-10.965,19.646-11.531c8-0.566,15.792,2.625,21.094,8.637l45.693,51.786l82.793-125.996 c4.745-7.217,12.807-11.576,21.444-11.585c8.637-0.009,16.708,4.332,21.463,11.54L453.95,375.992 C456.034,379.156,456.215,383.2,454.417,386.525z"></path></g></svg>';
         button.addEventListener('click', shortcut_command_show);
         return button;
     }
 
-    function create_thumbnail_container() {
+    function create_container() {
         const div = document.createElement('div');
         div.classList.add('_tap_thumbnail_button');
         return div;
@@ -26,7 +32,7 @@ function main() {
         input.addEventListener('blur', shortcut_command_hide);
         input.addEventListener('mouseout', shortcut_command_hide);
         input.addEventListener('contextmenu', e => { e.stopPropagation(); });
-        thumbnail_container.appendChild(input);
+        container.appendChild(input);
         return input;
     }
 
@@ -41,54 +47,81 @@ function main() {
         });
     }
 
-    function append_thumbnail_button() {
-        function append_thumbnail_button_internal() {
-            if (thumbnail_button) {
-                const slate = player?.querySelector('div.ytp-offline-slate');
-                if (slate && getComputedStyle(slate).display !== 'none') {
-                    const area_offline = slate.querySelector('div.ytp-offline-slate-bar');
-                    thumbnail_button.style.width = '48px';
-                    thumbnail_button.style.height = '48px';
-                    area_offline.appendChild(thumbnail_button);
-                    return true;
+    function append_button() {
+        function append_button_internal() {
+            const slate = player.querySelector('div.ytp-offline-slate');
+            if (slate && getComputedStyle(slate).display !== 'none') {
+                const area = slate.querySelector('div.ytp-offline-slate-bar');
+                if (!area) return;
+
+                if (button.style.width !== '56px') {
+                    Object.assign(button.style, {
+                        width: '56px',
+                        height: '56px',
+                    });
                 }
 
-                const action_menu = document.getElementsByTagName('player-fullscreen-action-menu')?.[0];
-                if (action_menu) { // new-style YouTube embedded player
-                    area = action_menu.querySelector('div.quick-actions-wrapper');
-                } else {
-                    area = player.querySelector('div.ytp-right-controls');
+                if (!area.contains(button)) {
+                    area.appendChild(button);
+                }
+            } else if (isEmbed(location.href)) {
+                const area = document.getElementsByTagName('player-fullscreen-action-menu')[0]?.querySelector('div.quick-actions-wrapper');
+                if (!area) return;
+
+                if (button.style.width !== '40px') {
+                    Object.assign(button.style, {
+                        width: '40px',
+                        height: '40px',
+                    });
                 }
 
-                if (area && getComputedStyle(area).display !== 'none') {
-                    if (action_menu) { // new-style YouTube embedded player
-                        thumbnail_button.style.width = '40px';
-                        thumbnail_button.style.height = '40px';
-                    } else {
-                        thumbnail_button.style.width = undefined;
-                        thumbnail_button.style.height = undefined;
-                    }
-                    area.insertBefore(thumbnail_button, area.firstChild);
-                    return true;
+                if (!area.contains(button)) {
+                    area.insertBefore(button, area.firstChild);
+                }
+            } else {
+                const area = player.querySelector('div.ytp-right-controls');
+                if (!area) return;
+
+                if (button.style.width !== '40px') {
+                    Object.assign(button.style, {
+                        width: '40px',
+                        height: '40px',
+                    });
+                }
+
+                if (!area.contains(button)) {
+                    area.insertBefore(button, area.firstChild);
                 }
             }
-            return false;
         }
 
-        clearInterval(detect_embedded_interval);
-        detect_embedded_interval = setInterval(() => {
-            if (append_thumbnail_button_internal()) {
-                clearInterval(detect_embedded_interval);
-            }
-        }, 200);
+        clearInterval(append_button_interval);
+        append_button_interval = setInterval(append_button_internal, 500);
+        append_button_internal();
     }
 
-    const shortcut_command_show = () => {
+    function append_container() {
+        if (isEmbed(location.href)) {
+            player.parentElement.appendChild(container);
+        } else {
+            player.appendChild(container);
+        }
+    }
+
+    function shortcut_command() {
+        if (container.style.display === '') {
+            shortcut_command_show();
+        } else {
+            shortcut_command_hide();
+        }
+    }
+
+    function shortcut_command_show() {
         if (player) {
             thumbnail.style.filter = 'contrast(0)';
             document.dispatchEvent(new CustomEvent('_tap_thumbnail_show'));
 
-            Object.assign(thumbnail_container.style, {
+            Object.assign(container.style, {
                 left: '0px',
                 top: '0px',
                 visibility: 'hidden',
@@ -96,9 +129,9 @@ function main() {
             });
 
             const player_rect = player.getBoundingClientRect();
-            let button_rect = getRelativeRect(thumbnail_button, player);
+            let button_rect = getRelativeRect(button, player);
 
-            Object.assign(thumbnail_container.style, {
+            Object.assign(container.style, {
                 left: `${Math.max(Math.min(button_rect.left + button_rect.width / 2 - 320, player_rect.width - 640), 0)}px`,
                 top: `${Math.max(Math.min(button_rect.bottom - 360, player_rect.height - 360), 0)}px`,
                 visibility: '',
@@ -109,29 +142,20 @@ function main() {
         }
     };
 
-    const shortcut_command_hide = () => {
-        Object.assign(thumbnail_container.style, {
+    function shortcut_command_hide() {
+        Object.assign(container.style, {
             display: '',
             opacity: 0,
         });
     };
 
-    const thumbnail_container = create_thumbnail_container();
+    const button = create_button();
+    const container = create_container();
     const thumbnail = create_thumbnail();
 
     let player;
-    let area;
-    let thumbnail_button;
     let detect_interval;
-    let detect_embedded_interval;
-
-    chrome.runtime.onMessage.addListener(() => {
-        if (thumbnail_container.style.display === '') {
-            shortcut_command_show();
-        } else {
-            shortcut_command_hide();
-        }
-    });
+    let append_button_interval;
 
     document.addEventListener('_tap_thumbnail_init', () => {
         clearInterval(detect_interval);
@@ -139,32 +163,13 @@ function main() {
             player = document.getElementById("movie_player");
             if (!player) return;
 
-            const video = player.querySelector('video.html5-main-video');
-            if (!video) return;
-
             clearInterval(detect_interval);
 
-            thumbnail_button = create_thumbnail_button();
-            append_thumbnail_button();
-
-            video.addEventListener('canplay', async () => {
-                append_thumbnail_button();
-            });
-
-
-            const action_menu = document.getElementsByTagName('player-fullscreen-action-menu')?.[0];
-            if (action_menu) { // new-style YouTube embedded player
-                player.parentElement.appendChild(thumbnail_container);
-            } else {
-                player.appendChild(thumbnail_container);
-            }
-
+            append_button();
+            append_container();
+            chrome.runtime.onMessage.addListener(shortcut_command);
             document.body.addEventListener('mouseleave', shortcut_command_hide);
         }, 500);
-    });
-
-    document.addEventListener('yt-navigate-finish', async () => {
-        append_thumbnail_button();
     });
 
     const s = document.createElement('script');

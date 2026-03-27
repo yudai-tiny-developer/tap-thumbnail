@@ -15,19 +15,17 @@
     let player;
 
     document.addEventListener('_tap_thumbnail_show', () => {
-        if (player) {
-            const video_id = player.getVideoData()?.video_id;
-            if (video_id) {
-                const thumbnail = document.getElementById('_tap_thumbnail_button');
-                thumbnail && (
-                    set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/maxresdefault.jpg`) ||
-                    set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/sddefault.jpg`) ||
-                    set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/hqdefault.jpg`) ||
-                    set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/mqdefault.jpg`) ||
-                    set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/default.jpg`) ||
-                    set_src(thumbnail, '')
-                );
-            }
+        const video_id = player.getVideoData()?.video_id;
+        if (video_id) {
+            const thumbnail = document.getElementById('_tap_thumbnail_button');
+            thumbnail && (
+                set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/maxresdefault.jpg`) ||
+                set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/sddefault.jpg`) ||
+                set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/hqdefault.jpg`) ||
+                set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/mqdefault.jpg`) ||
+                set_src(thumbnail, `https://i.ytimg.com/vi/${video_id}/default.jpg`) ||
+                set_src(thumbnail, '')
+            );
         }
     });
 
